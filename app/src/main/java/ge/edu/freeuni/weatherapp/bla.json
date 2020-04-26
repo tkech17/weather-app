@@ -1,0 +1,41 @@
+{
+  "request": {
+    "type": "City",
+    "query": "Tbilisi, Georgia",
+    "language": "en",
+    "unit": "m"
+  },
+  "location": {
+    "name": "Tbilisi",
+    "country": "Georgia",
+    "region": "Dushet'is Raioni",
+    "lat": "41.725",
+    "lon": "44.791",
+    "timezone_id": "Asia\/Tbilisi",
+    "localtime": "2020-04-26 22:15",
+    "localtime_epoch": 1587939300,
+    "utc_offset": "4.0"
+  },
+  "current": {
+    "observation_time": "06:15 PM",
+    "temperature": 13,
+    "weather_code": 113,
+    "weather_icons": [
+      "https:\/\/assets.weatherstack.com\/images\/wsymbols01_png_64\/wsymbol_0008_clear_sky_night.png"
+    ],
+    "weather_descriptions": [
+      "Clear"
+    ],
+    "wind_speed": 30,
+    "wind_degree": 320,
+    "wind_dir": "NW",
+    "pressure": 1011,
+    "precip": 0,
+    "humidity": 58,
+    "cloudcover": 0,
+    "feelslike": 11,
+    "uv_index": 1,
+    "visibility": 10,
+    "is_day": "no"
+  }
+}
