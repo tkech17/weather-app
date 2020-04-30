@@ -7,7 +7,7 @@ import ge.edu.freeuni.weatherapp.model.Country
  */
 class CountryManagerImpl(private val countries: List<Country>) : CountryManager {
 
-    private var currentCountryIndex: Int = -1
+    private var currentCountryIndex: Int = 0
 
     override fun getCurrentCountry(): Country {
         return countries[currentCountryIndex]
@@ -23,4 +23,8 @@ class CountryManagerImpl(private val countries: List<Country>) : CountryManager 
         return countries[currentCountryIndex]
     }
 
+}
+
+fun countryManagerOf(countries: List<Country>): CountryManagerImpl {
+    return CountryManagerImpl(countries)
 }

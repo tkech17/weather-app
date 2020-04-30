@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Weather App</string>
     <string name="try_again">Try Again</string>
+    <string name="no_description">no_description</string>
+	<string name="precipitation">Precipitation</string>
+	<string name="humidity">Humidity</string>
+	<string name="windSpeed">Wind Speed</string>
+	<string name="dayAndNight">Day and Night</string>
 </resources>

@@ -1,3 +1,5 @@
 package ge.edu.freeuni.weatherapp.model
 
-data class Country(val name: String)
+import java.io.Serializable
+
+data class Country(val name: String) : Serializable
