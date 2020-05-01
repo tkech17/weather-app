@@ -10,10 +10,11 @@ import retrofit2.http.Query
 
 interface WeatherService {
 
-    @GET("forecast")
+    @GET("weather")
     fun getCountryWeather(
         @Query("q") countryName: String,
-//        @Query("forecast_days") forecastDays: Int = 10,
+        @Query("forecast_days") forecastDays: Int = 10,
+        @Query("units") units: String = "metric",
         @Query("appid") accessKey: String = APP.API_KEY
     ): Call<WeatherApiResponse>
 
