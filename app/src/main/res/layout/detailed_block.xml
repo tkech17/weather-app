@@ -16,7 +16,7 @@
 		app:layout_constraintBottom_toTopOf="@+id/detailed_block_text"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:srcCompat="@drawable/ic_drop" />
+		tools:srcCompat="@drawable/ic_drop" />
 
 	<TextView
 		android:id="@+id/detailed_block_text"
