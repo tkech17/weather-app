@@ -3,15 +3,16 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:background="@color/white"
+	android:layout_marginStart="15dp"
+	android:layout_marginEnd="15dp"
 	android:layout_height="match_parent">
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/weather_description_precipitation"
-		android:layout_width="76dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/weather_description_humidity"
-		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent">
 
@@ -24,7 +25,6 @@
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/weather_description_wind_speed"
-		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toEndOf="@+id/weather_description_precipitation"
 		app:layout_constraintTop_toTopOf="parent">
 
@@ -37,7 +37,6 @@
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/weather_description_day_and_night"
-		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toEndOf="@+id/weather_description_humidity"
 		app:layout_constraintTop_toTopOf="parent">
 
@@ -50,7 +49,6 @@
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toEndOf="@+id/weather_description_wind_speed"
 		app:layout_constraintTop_toTopOf="parent">
 

@@ -20,9 +20,9 @@ import ge.edu.freeuni.weatherapp.integration.WeatherService
 import ge.edu.freeuni.weatherapp.model.City
 import ge.edu.freeuni.weatherapp.model.Weather
 import ge.edu.freeuni.weatherapp.model.WeatherApiResponse
-import ge.edu.freeuni.weatherapp.model.WeatherData
 import ge.edu.freeuni.weatherapp.pages.weather.adapter.RecyclerViewAdapter
 import ge.edu.freeuni.weatherapp.utils.getRetrofitWithURL
+import ge.edu.freeuni.weatherapp.utils.parseDateHour
 import ge.edu.freeuni.weatherapp.utils.roundDoubleToInt
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +34,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Calendar
+import java.util.Date
 
 class WeatherFragment : Fragment() {
 
@@ -60,6 +61,8 @@ class WeatherFragment : Fragment() {
 	private lateinit var weatherDescriptionWrapper: WeatherDescription
 	private lateinit var recyclerView: RecyclerView
 	private lateinit var adapter: RecyclerViewAdapter
+	private lateinit var wrapperLayout: ConstraintLayout
+	private lateinit var errorTextView: TextView
 
 
 	@SuppressLint("InflateParams")
@@ -68,7 +71,8 @@ class WeatherFragment : Fragment() {
 		initService()
 		initRecyclerView(view)
 
-
+		wrapperLayout = view.findViewById(R.id.wrapper)
+		errorTextView = view.findViewById(R.id.fragment_weather_error_string)
 		val weatherForecastView: ConstraintLayout = getWeatherForecastLayout(view)
 		weatherForecastWrapper = WeatherForecast(weatherForecastView)
 		val weatherDescView: ConstraintLayout = getWeatherDescriptionLayout(view)
@@ -106,84 +110,33 @@ class WeatherFragment : Fragment() {
 			.first() as ConstraintLayout
 	}
 
-	private fun setValues(country: String, currentWeather: WeatherData) {
-		weatherDescriptionWrapper.setValues(currentWeather)
-		weatherForecastWrapper.setValues(WeatherApiResponse(listOf(currentWeather), City(country)))
-		adapter.setData(
-			listOf(
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main,
-				currentWeather.main
-			)
-		)
+	private fun setValues(response: WeatherApiResponse) {
+		weatherForecastWrapper.setValues(response)
+		weatherDescriptionWrapper.setValues(response)
+
+		val weathers = response.list
+		adapter.setData(weathers)
 	}
 
 	private fun downloadWeatherByCountry(country: String) {
 		val retrofit: Retrofit = getRetrofitWithURL(APP.WEATHER_FORECAST_BASE_URL)
 		weatherService = retrofit.create(WeatherService::class.java)
 
-		weatherService.getCurrentWeather(country).enqueue(object : Callback<WeatherData> {
-			override fun onFailure(call: Call<WeatherData>, t: Throwable) {
-				t.message?.let { Log.e("BLA", it) }
+		weatherService.getCurrentWeather(country).enqueue(object : Callback<WeatherApiResponse> {
+			@SuppressLint("SetTextI18n")
+			override fun onFailure(call: Call<WeatherApiResponse>, t: Throwable) {
+				t.message?.let { Log.e(WeatherFragment::class.simpleName, it) }
+				wrapperLayout.visibility = View.INVISIBLE
+				errorTextView.text = "error while trying to load $country weather info"
+				errorTextView.visibility = View.VISIBLE
 			}
 
-			override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
+			override fun onResponse(call: Call<WeatherApiResponse>, response: Response<WeatherApiResponse>) {
 				if (response.isSuccessful) {
-					setValues(country, response.body()!!)
+					wrapperLayout.visibility = View.VISIBLE
+					errorTextView.visibility = View.INVISIBLE
+					val result: WeatherApiResponse = response.body()!!
+					setValues(result)
 				} else {
 					onFailure(call, Throwable())
 				}
@@ -203,13 +156,20 @@ class WeatherDescription(private val descriptionLayout: ConstraintLayout) {
 	private val dayAndNight: ConstraintLayout = descriptionLayout.findViewById(R.id.weather_description_day_and_night)
 
 
-	fun setValues(currentWeather: WeatherData) {
-		val weather: Weather = currentWeather.main
+	fun setValues(response: WeatherApiResponse) {
+		val currentWeatherData = response.list[0]
+		val currentWeather: Weather = currentWeatherData.main
 		val resources = descriptionLayout.resources
-		setBlockValue(precipitation, resources.getString(R.string.precipitation), "precipitation", getDrawableByDay(R.drawable.ic_drop, R.drawable.ic_drop_night))
-		setBlockValue(humidity, resources.getString(R.string.humidity), weather.humidity + "%", getDrawableByDay(R.drawable.ic_humidity, R.drawable.ic_humidity_night))
-		setBlockValue(windSpeed, resources.getString(R.string.windSpeed), roundDoubleToInt(currentWeather.wind.speed) + "kmp", getDrawableByDay(R.drawable.ic_flag, R.drawable.ic_flag_night))
-		setBlockValue(dayAndNight, resources.getString(R.string.dayAndNight), "dayAndNight", R.drawable.ic_day_night)
+		setBlockValue(precipitation, resources.getString(R.string.precipitation), currentWeatherData.clouds.all + "%", getDrawableByDay(R.drawable.ic_drop, R.drawable.ic_drop_night))
+		setBlockValue(humidity, resources.getString(R.string.humidity), currentWeather.humidity + "%", getDrawableByDay(R.drawable.ic_humidity, R.drawable.ic_humidity_night))
+		setBlockValue(windSpeed, resources.getString(R.string.windSpeed), roundDoubleToInt(currentWeatherData.wind.speed) + "kmp", getDrawableByDay(R.drawable.ic_flag, R.drawable.ic_flag_night))
+		setBlockValue(dayAndNight, resources.getString(R.string.dayAndNight), getSunriseSunsetStr(response.city), R.drawable.ic_day_night)
+	}
+
+	private fun getSunriseSunsetStr(city: City): String {
+		val sunRise = Date(city.sunrise)
+		val sunSet = Date(city.sunset)
+		return "${parseDateHour(sunRise)} ${parseDateHour(sunSet)}"
 	}
 
 	private fun setBlockValue(lin: ConstraintLayout, text: String, value: String, icon: Int) {
@@ -261,7 +221,11 @@ class WeatherForecast(private val forecastLayout: ConstraintLayout) {
 	private fun getCurrentDateTimeText(): String {
 		val zonedDateTime: ZonedDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
 		val dateStr = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).format(zonedDateTime)
-		return dateStr.substring(0, dateStr.indexOf("AM") + 2)
+		var indexOf = dateStr.indexOf(" AM ")
+		if (indexOf < 0) {
+			indexOf = dateStr.indexOf(" PM ")
+		}
+		return dateStr.substring(0, indexOf + 3)
 	}
 
 }

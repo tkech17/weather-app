@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ge.edu.freeuni.weatherapp.R
-import ge.edu.freeuni.weatherapp.model.Weather
+import ge.edu.freeuni.weatherapp.model.WeatherData
 
 class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-	private val countries: MutableList<Weather> = mutableListOf()
+	private val countries: MutableList<WeatherData> = mutableListOf()
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 		val view: View = LayoutInflater.from(parent.context).inflate(R.layout.weather_item, parent, false)
@@ -22,13 +22,12 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 	}
 
 	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-		val weather: Weather = countries[position]
+		val weather: WeatherData = countries[position]
 		val weatherViewHolder: WeatherItemViewHolder = holder as WeatherItemViewHolder
-		Log.e("BLA", "index :  $position")
 		weatherViewHolder.setData(weather)
 	}
 
-	fun setData(countries: List<Weather>) {
+	fun setData(countries: List<WeatherData>) {
 		this.countries.clear()
 		this.countries.addAll(countries)
 		this.notifyDataSetChanged()

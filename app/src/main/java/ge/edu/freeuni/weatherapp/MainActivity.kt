@@ -19,54 +19,54 @@ import retrofit2.Retrofit
 class MainActivity : AppCompatActivity() {
 
 
-    private lateinit var loadingGif: GifImageView
-    private lateinit var tryAgainButton: AppCompatButton
+	private lateinit var loadingGif: GifImageView
+	private lateinit var tryAgainButton: AppCompatButton
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        this.setContentView(R.layout.activity_main)
-        loadingGif = findViewById(R.id.main_activity_loading_gif)
-        tryAgainButton = findViewById(R.id.main_activity_try_again_button)
-        tryAgainButton.setOnClickListener {
-            getCountriesFromNet()
-            it.visibility = View.INVISIBLE
-        }
-        getCountriesFromNet()
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		this.setContentView(R.layout.activity_main)
+		loadingGif = findViewById(R.id.main_activity_loading_gif)
+		tryAgainButton = findViewById(R.id.fragment_weather_error_string)
+		tryAgainButton.setOnClickListener {
+			getCountriesFromNet()
+			it.visibility = View.INVISIBLE
+		}
+		getCountriesFromNet()
+	}
 
-    private fun getCountriesFromNet() {
-        val retrofit: Retrofit = getRetrofitWithURL(APP.COUNTRY_API_BASE_URL)
-        val countriesService: CountriesService = retrofit.create(CountriesService::class.java)
-        loadingGif.visibility = View.VISIBLE
+	private fun getCountriesFromNet() {
+		val retrofit: Retrofit = getRetrofitWithURL(APP.COUNTRY_API_BASE_URL)
+		val countriesService: CountriesService = retrofit.create(CountriesService::class.java)
+		loadingGif.visibility = View.VISIBLE
 
-        countriesService.getAllCountries().enqueue(object : Callback<List<Country>> {
+		countriesService.getAllCountries().enqueue(object : Callback<List<Country>> {
 
-            override fun onResponse(call: Call<List<Country>>, response: Response<List<Country>>) {
-                loadingGif.visibility = View.INVISIBLE
-                if (response.isSuccessful) {
-                    val countries: List<Country> = response.body()!!
-                    openWeatherAppPage(countries)
-                } else {
-                    tryAgainButton.visibility = View.VISIBLE
-                    Toast.makeText(baseContext, response.message(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
+			override fun onResponse(call: Call<List<Country>>, response: Response<List<Country>>) {
+				loadingGif.visibility = View.INVISIBLE
+				if (response.isSuccessful) {
+					val countries: List<Country> = response.body()!!
+					openWeatherAppPage(countries)
+				} else {
+					tryAgainButton.visibility = View.VISIBLE
+					Toast.makeText(baseContext, response.message(), Toast.LENGTH_SHORT)
+						.show()
+				}
+			}
 
-            override fun onFailure(call: Call<List<Country>>, t: Throwable) {
-                loadingGif.visibility = View.INVISIBLE
-                tryAgainButton.visibility = View.VISIBLE
-                Toast.makeText(baseContext, "Internet Problem", Toast.LENGTH_SHORT).show()
-            }
+			override fun onFailure(call: Call<List<Country>>, t: Throwable) {
+				loadingGif.visibility = View.INVISIBLE
+				tryAgainButton.visibility = View.VISIBLE
+				Toast.makeText(baseContext, "Internet Problem", Toast.LENGTH_SHORT).show()
+			}
 
-        })
-    }
+		})
+	}
 
-    private fun openWeatherAppPage(countries: List<Country>) {
-        val intent = Intent(baseContext, WeatherActivity::class.java)
-        intent.putExtra("countries", countries.toTypedArray())
-        startActivity(intent)
-    }
+	private fun openWeatherAppPage(countries: List<Country>) {
+		val intent = Intent(baseContext, WeatherActivity::class.java)
+		intent.putExtra("countries", countries.toTypedArray())
+		startActivity(intent)
+	}
 
 
 }

@@ -17,8 +17,7 @@ class WeatherActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_weather)
 		viewPager = findViewById(R.id.viewPager)
 
-		val countries = (intent.getSerializableExtra("countries") as Array<Country>).asSequence()
-			.filter { !it.name.contains("(") && !it.name.contains(" ") }
+		val countries: List<String> = (intent.getSerializableExtra("countries") as Array<Country>).asSequence()
 			.map { it.name }
 			.toList()
 

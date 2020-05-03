@@ -20,11 +20,12 @@
 
 	<TextView
 		android:id="@+id/detailed_block_text"
-		android:layout_width="80dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="center"
 		android:textSize="12sp"
 		android:singleLine="true"
+		android:layout_gravity="center"
 		android:layout_marginBottom="10dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -34,15 +35,17 @@
 
 	<TextView
 		android:id="@+id/detailed_block_value"
-		android:layout_width="80dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:textSize="14sp"
+		android:layout_gravity="center"
+		android:textSize="10sp"
+		android:textStyle="bold"
 		android:singleLine="true"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/detailed_block_text"
-		tools:text="TextView" />
+		tools:text="TextView"
+		tools:ignore="SmallSp" />
 
 
 

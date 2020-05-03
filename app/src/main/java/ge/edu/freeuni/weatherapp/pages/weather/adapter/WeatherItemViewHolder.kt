@@ -5,10 +5,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ge.edu.freeuni.weatherapp.R
-import ge.edu.freeuni.weatherapp.model.Weather
+import ge.edu.freeuni.weatherapp.model.WeatherData
+import ge.edu.freeuni.weatherapp.utils.convertLocalDateTimeToDate
+import ge.edu.freeuni.weatherapp.utils.parseDateHour
+import ge.edu.freeuni.weatherapp.utils.parseStrToLocalDateTime
 import ge.edu.freeuni.weatherapp.utils.roundDoubleToInt
-import java.lang.Double.parseDouble
+import java.time.LocalDateTime
+import java.util.Date
 
 class WeatherItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -17,15 +22,19 @@ class WeatherItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 	private var celsius: TextView = view.findViewById(R.id.weather_item_celsius)
 
 	@SuppressLint("SetTextI18n")
-	fun setData(weather: Weather) {
-		time.text = weather.temp
-		celsius.text = "${roundDoubleToInt(weather.temp)}°C"
+	fun setData(weather: WeatherData) {
+		val localDateTime: LocalDateTime = parseStrToLocalDateTime(weather.dtTxt)
+		val date: Date = convertLocalDateTimeToDate(localDateTime)
+		time.text = parseDateHour(date)
 
-		if (parseDouble(weather.temp) > 9) {
-			icon.setImageResource(R.drawable.ic_sun)
-		}else{
-			icon.setImageResource(R.drawable.ic_moon)
-		}
+		celsius.text = "${roundDoubleToInt(weather.main.temp)}°C"
+
+		val iconName = weather.iconWrapper[0].icon
+		Picasso.get()
+			.load("https://openweathermap.org/img/wn/$iconName@2x.png")
+			.error(R.drawable.error_image)
+			.into(icon)
+
 	}
 
 }
