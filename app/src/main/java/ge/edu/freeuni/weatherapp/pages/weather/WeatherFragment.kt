@@ -23,11 +23,11 @@ import ge.edu.freeuni.weatherapp.model.WeatherApiResponse
 import ge.edu.freeuni.weatherapp.model.WeatherData
 import ge.edu.freeuni.weatherapp.pages.weather.adapter.RecyclerViewAdapter
 import ge.edu.freeuni.weatherapp.utils.getRetrofitWithURL
+import ge.edu.freeuni.weatherapp.utils.roundDoubleToInt
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.lang.Double.parseDouble
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -106,12 +106,49 @@ class WeatherFragment : Fragment() {
 			.first() as ConstraintLayout
 	}
 
-	private fun setValues(apiResponse: WeatherApiResponse) {
-		val currentWeather: WeatherData = apiResponse.list[0]
+	private fun setValues(country: String, currentWeather: WeatherData) {
 		weatherDescriptionWrapper.setValues(currentWeather)
-		weatherForecastWrapper.setValues(apiResponse)
+		weatherForecastWrapper.setValues(WeatherApiResponse(listOf(currentWeather), City(country)))
 		adapter.setData(
 			listOf(
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
+				currentWeather.main,
 				currentWeather.main,
 				currentWeather.main,
 				currentWeather.main,
@@ -139,14 +176,14 @@ class WeatherFragment : Fragment() {
 		val retrofit: Retrofit = getRetrofitWithURL(APP.WEATHER_FORECAST_BASE_URL)
 		weatherService = retrofit.create(WeatherService::class.java)
 
-		weatherService.getCountryWeather(country).enqueue(object : Callback<WeatherApiResponse> {
-			override fun onFailure(call: Call<WeatherApiResponse>, t: Throwable) {
+		weatherService.getCurrentWeather(country).enqueue(object : Callback<WeatherData> {
+			override fun onFailure(call: Call<WeatherData>, t: Throwable) {
 				t.message?.let { Log.e("BLA", it) }
 			}
 
-			override fun onResponse(call: Call<WeatherApiResponse>, response: Response<WeatherApiResponse>) {
+			override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
 				if (response.isSuccessful) {
-					setValues(response.body()!!)
+					setValues(country, response.body()!!)
 				} else {
 					onFailure(call, Throwable())
 				}
@@ -216,7 +253,7 @@ class WeatherForecast(private val forecastLayout: ConstraintLayout) {
 			weatherIconView.setImageResource(R.drawable.ic_moon)
 		}
 		countryTextView.text = city.name
-		celsiusTextView.text = roundDoubleToInt(currentWeather.temp) + "°C"
+		celsiusTextView.text = "${roundDoubleToInt(currentWeather.temp)}°C"
 		perceivedCelsiusTextView.text = "Perceived " + roundDoubleToInt(currentWeather.feelsLike) + "°C"
 		dayTextView.text = getCurrentDateTimeText()
 	}
@@ -238,5 +275,3 @@ private fun isDay(): Boolean {
 	}
 	return false
 }
-
-private fun roundDoubleToInt(doubleVal: String) = parseDouble(doubleVal).toInt().toString()

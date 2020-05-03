@@ -37,7 +37,8 @@
 		app:layout_constraintEnd_toStartOf="@+id/weather_item_celsius"
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toEndOf="@+id/weather_item_time"
-		app:layout_constraintTop_toTopOf="parent" />
+		app:layout_constraintTop_toTopOf="parent"
+		tools:src="@drawable/ic_sun"/>
 
 	<TextView
 		android:id="@+id/weather_item_celsius"
