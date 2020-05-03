@@ -2,12 +2,10 @@ package ge.edu.freeuni.weatherapp.pages.weather
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import ge.edu.freeuni.weatherapp.R
 import ge.edu.freeuni.weatherapp.model.Country
+import ge.edu.freeuni.weatherapp.pages.weather.adapter.ViewPagerAdapter
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -26,18 +24,6 @@ class WeatherActivity : AppCompatActivity() {
 
 		val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, 0, countries)
 		viewPager.adapter = viewPagerAdapter
-	}
-
-}
-
-class ViewPagerAdapter(supportFragmentManager: FragmentManager, behaviour: Int, private val countries: List<String>) : FragmentPagerAdapter(supportFragmentManager, behaviour) {
-	override fun getItem(position: Int): Fragment {
-		val country = countries[position]
-		return WeatherFragment.newInstance(country)
-	}
-
-	override fun getCount(): Int {
-		return countries.size
 	}
 
 }

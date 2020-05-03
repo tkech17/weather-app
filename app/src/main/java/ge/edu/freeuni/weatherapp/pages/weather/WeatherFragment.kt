@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ge.edu.freeuni.weatherapp.APP
@@ -26,6 +27,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.lang.Double.parseDouble
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Calendar
 
 class WeatherFragment : Fragment() {
 
@@ -54,6 +62,7 @@ class WeatherFragment : Fragment() {
 	private lateinit var adapter: RecyclerViewAdapter
 
 
+	@SuppressLint("InflateParams")
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		val view: View = inflater.inflate(R.layout.fragment_weather, null)
 		initService()
@@ -73,6 +82,8 @@ class WeatherFragment : Fragment() {
 		adapter = RecyclerViewAdapter()
 		recyclerView.adapter = adapter
 		recyclerView.layoutManager = LinearLayoutManager(view.context)
+		val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+		recyclerView.addItemDecoration(decoration)
 	}
 
 
@@ -156,23 +167,29 @@ class WeatherDescription(private val descriptionLayout: ConstraintLayout) {
 
 
 	fun setValues(currentWeather: WeatherData) {
+		val weather: Weather = currentWeather.main
 		val resources = descriptionLayout.resources
-		setBlockValue(precipitation, resources.getString(R.string.precipitation), "precipitation", true)
-		setBlockValue(humidity, resources.getString(R.string.humidity), currentWeather.main.humidity + "%", true)
-		setBlockValue(windSpeed, resources.getString(R.string.windSpeed), currentWeather.wind.speed + " kmp", true)
-		setBlockValue(dayAndNight, resources.getString(R.string.dayAndNight), "dayAndNight", true)
+		setBlockValue(precipitation, resources.getString(R.string.precipitation), "precipitation", getDrawableByDay(R.drawable.ic_drop, R.drawable.ic_drop_night))
+		setBlockValue(humidity, resources.getString(R.string.humidity), weather.humidity + "%", getDrawableByDay(R.drawable.ic_humidity, R.drawable.ic_humidity_night))
+		setBlockValue(windSpeed, resources.getString(R.string.windSpeed), roundDoubleToInt(currentWeather.wind.speed) + "kmp", getDrawableByDay(R.drawable.ic_flag, R.drawable.ic_flag_night))
+		setBlockValue(dayAndNight, resources.getString(R.string.dayAndNight), "dayAndNight", R.drawable.ic_day_night)
 	}
 
-	private fun setBlockValue(lin: ConstraintLayout, text: String, value: String, isDay: Boolean) {
+	private fun setBlockValue(lin: ConstraintLayout, text: String, value: String, icon: Int) {
 		val child: View = lin.children.first()
 		val blockIcon: ImageView = child.findViewById(R.id.detailed_block_icon)
 		val textView: TextView = child.findViewById(R.id.detailed_block_text)
 		val valueView: TextView = child.findViewById(R.id.detailed_block_value)
 		textView.text = text
 		valueView.text = value
-		if (isDay) {
-			blockIcon.setImageResource(R.drawable.ic_drop)
+		blockIcon.setImageResource(icon)
+	}
+
+	private fun getDrawableByDay(dayDrawable: Int, nightDrawable: Int): Int {
+		if (isDay()) {
+			return dayDrawable
 		}
+		return nightDrawable
 	}
 
 }
@@ -191,7 +208,7 @@ class WeatherForecast(private val forecastLayout: ConstraintLayout) {
 		val currentWeather: Weather = apiResponse.list[0].main
 		val city: City = apiResponse.city
 
-		if (currentWeather.isDay()) {
+		if (isDay()) {
 			forecastLayout.background = forecastLayout.context!!.getDrawable(R.drawable.day_background)
 			weatherIconView.setImageResource(R.drawable.ic_sun)
 		} else {
@@ -199,13 +216,27 @@ class WeatherForecast(private val forecastLayout: ConstraintLayout) {
 			weatherIconView.setImageResource(R.drawable.ic_moon)
 		}
 		countryTextView.text = city.name
-		dayTextView.text = "Monday 17 gen 18 6:32 am"
-		celsiusTextView.text = currentWeather.temp + "°C"
-		perceivedCelsiusTextView.text = "perceived " + currentWeather.feelsLike + "°C"
+		celsiusTextView.text = roundDoubleToInt(currentWeather.temp) + "°C"
+		perceivedCelsiusTextView.text = "Perceived " + roundDoubleToInt(currentWeather.feelsLike) + "°C"
+		dayTextView.text = getCurrentDateTimeText()
+	}
+
+	private fun getCurrentDateTimeText(): String {
+		val zonedDateTime: ZonedDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
+		val dateStr = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).format(zonedDateTime)
+		return dateStr.substring(0, dateStr.indexOf("AM") + 2)
 	}
 
 }
 
-private fun Weather.isDay(): Boolean {
-	return true
+
+private fun isDay(): Boolean {
+	val c: Calendar = Calendar.getInstance()
+	val timeOfDay: Int = c.get(Calendar.HOUR_OF_DAY)
+	if (timeOfDay in 7..19) {
+		return true
+	}
+	return false
 }
+
+private fun roundDoubleToInt(doubleVal: String) = parseDouble(doubleVal).toInt().toString()

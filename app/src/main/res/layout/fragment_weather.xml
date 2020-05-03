@@ -36,13 +36,15 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="20dp"
+				android:background="@drawable/shape"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/activity_main_forecast_wrapper">
 
 				<include
 					android:id="@+id/activity_weather_include_description"
-					layout="@layout/weather_description" />
+					layout="@layout/weather_description"
+					android:background="@drawable/shape" />
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
 			<androidx.constraintlayout.widget.ConstraintLayout
